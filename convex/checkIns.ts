@@ -293,20 +293,29 @@ export const runCheckInTriggerEvaluation = internalAction({
 
       for (let i = 0; i < result.page.length; i += BATCH_SIZE) {
         const batch = result.page.slice(i, i + BATCH_SIZE);
-        for (const userId of batch) {
-          try {
-            const sent = await evaluateUserCheckIn(ctx, userId, now);
-            checkInsSent += sent;
-          } catch (err) {
+        const outcomes = await Promise.allSettled(
+          batch.map((userId) => evaluateUserCheckIn(ctx, userId, now)),
+        );
+        for (let j = 0; j < outcomes.length; j++) {
+          const outcome = outcomes[j];
+          const userId = batch[j];
+          if (outcome.status === "fulfilled") {
+            checkInsSent += outcome.value;
+          } else {
+            const err = outcome.reason;
             console.error("[check-in] evaluateTriggersForUser failed", {
               userId,
               error: err instanceof Error ? err.message : String(err),
             });
-            void ctx.runAction(internal.discord.notifyError, {
-              source: "checkIns",
-              message: `Trigger evaluation failed: ${err instanceof Error ? err.message : String(err)}`,
-              userId,
-            });
+            ctx
+              .runAction(internal.discord.notifyError, {
+                source: "checkIns",
+                message: `Trigger evaluation failed: ${err instanceof Error ? err.message : String(err)}`,
+                userId,
+              })
+              .catch((notifyErr: unknown) =>
+                console.warn("[check-in] discord notify failed", notifyErr),
+              );
           }
         }
         if (i + BATCH_SIZE < result.page.length) {
