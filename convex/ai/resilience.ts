@@ -17,7 +17,11 @@ import { type ProviderId } from "./providers";
 import { type AccumulatorInit, RunAccumulator } from "./runTelemetry";
 import { buildByokErrorMessage, classifyByokError } from "./byokErrors";
 import { runInRunSpan } from "./otel";
-import { isTransientError } from "./transientErrors";
+import {
+  buildProviderTransientMessage,
+  classifyTransientError,
+  isTransientError,
+} from "./transientErrors";
 
 // Re-export for backwards compatibility with existing callers/tests.
 export { buildByokErrorMessage, classifyByokError, withByokErrorSanitization } from "./byokErrors";
@@ -172,7 +176,10 @@ export async function streamWithRetry(
       accumulator.markFallback("transient_exhaustion");
       const final = await runAttempt(fallbackAgent);
       if (final.done) return accumulator;
-      // Fallback also hit a transient error — terminal now, surface the generic message.
+      // Fallback also hit a transient error. Classify it, record the terminal
+      // class on the accumulator + span, then hand off to reportError — which
+      // surfaces a provider-attributed message for transient outages and falls
+      // back to the generic "trouble right now" message otherwise.
       const cls = errorClassName(final.error);
       accumulator.setTerminalErrorClass(cls);
       span.recordError(cls);
@@ -333,11 +340,22 @@ async function tryReportByok(ctx: ActionCtx, report: ErrorReport): Promise<boole
 async function reportError(ctx: ActionCtx, report: ErrorReport): Promise<void> {
   const reason = report.error instanceof Error ? report.error.message : String(report.error);
   await finalizePendingMessages(ctx, report.threadId, reason);
+
+  const transientKind = classifyTransientError(report.error);
+  const content = transientKind
+    ? buildProviderTransientMessage(transientKind, report.provider)
+    : AI_ERROR_MESSAGE;
+
   await saveMessage(ctx, components.agent, {
     threadId: report.threadId,
     userId: report.userId,
-    message: { role: "assistant", content: AI_ERROR_MESSAGE },
+    message: { role: "assistant", content },
   });
+
+  // Upstream provider outages already surface to the user with an attributed
+  // message; paging Discord on every Gemini/Claude capacity blip is noise.
+  if (transientKind) return;
+
   await ctx.runAction(internal.discord.notifyError, {
     source: "streamWithRetry",
     message: reason,
