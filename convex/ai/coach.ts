@@ -96,6 +96,15 @@ function hashString(input: string): string {
   return (h >>> 0).toString(16).padStart(8, "0");
 }
 
+// Snapshot content includes user-entered goals, injuries, and feedback.
+// Neutralizes any <training-data> tokens the user could have typed so they
+// can't close the wrapper and smuggle text that reads as extra instructions.
+export function escapeTrainingDataTags(input: string): string {
+  return input
+    .replaceAll("</training-data>", "</training_data>")
+    .replaceAll("<training-data>", "<training_data>");
+}
+
 export const coachAgentConfig = {
   embeddingModel: sharedEmbeddingModel,
 
@@ -183,22 +192,26 @@ export function makeCoachAgentConfig(userTimezone?: string) {
           stripImagesFromOlderMessages(stripOrphanedToolCalls(args.allMessages)),
         ),
       );
-      // Snapshot is added after this so the per-call snapshot doesn't bust the prefix cache.
-      const systemMessages: ModelMessage[] = [
-        {
-          role: "system",
-          content: STATIC_INSTRUCTIONS,
-          providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
-        },
-      ];
-      if (args.userId) {
-        const snapshot = await buildTrainingSnapshot(ctx, args.userId, userTimezone);
-        systemMessages.push({
-          role: "system",
-          content: `<training-data>\n${snapshot}\n</training-data>`,
-        });
+      const staticSystem: ModelMessage = {
+        role: "system",
+        content: STATIC_INSTRUCTIONS,
+        providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
+      };
+
+      if (!args.userId || messages.length === 0) {
+        return [staticSystem, ...messages];
       }
-      return [...systemMessages, ...messages];
+
+      // Trailing position (not system[1]) keeps the cached prefix byte-stable
+      // so Anthropic's cache breakpoint on STATIC_INSTRUCTIONS holds across calls.
+      const snapshot = await buildTrainingSnapshot(ctx, args.userId, userTimezone);
+      const snapshotSystem: ModelMessage = {
+        role: "system",
+        content: `<training-data>\n${escapeTrainingDataTags(snapshot)}\n</training-data>`,
+      };
+      const head = messages.slice(0, -1);
+      const tail = messages[messages.length - 1];
+      return [staticSystem, ...head, snapshotSystem, tail];
     }) satisfies ContextHandler,
   };
 }
