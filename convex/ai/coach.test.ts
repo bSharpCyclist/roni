@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ModelMessage } from "ai";
-import { escapeTrainingDataTags, makeCoachAgentConfig } from "./coach";
+import { coachAgentConfig, escapeTrainingDataTags, makeCoachAgentConfig } from "./coach";
 
 const testConfig = makeCoachAgentConfig();
 type ContextHandlerArgs = Parameters<NonNullable<typeof testConfig.contextHandler>>[1];
@@ -228,6 +228,19 @@ describe("coachAgentConfig.contextHandler — training snapshot placement", () =
     await runContextHandler(allMessages, { userId, ctx: EMPTY_PROFILE_CTX });
 
     expect(JSON.stringify(allMessages)).toBe(snapshot);
+  });
+});
+
+describe("coachAgentConfig.tools — Anthropic tool cache breakpoint", () => {
+  it("marks exactly one tool with anthropic cacheControl — the last one in the registry", () => {
+    const toolEntries = Object.entries(coachAgentConfig.tools);
+    const tagged = toolEntries.filter(
+      ([, t]) =>
+        (t as { providerOptions?: { anthropic?: { cacheControl?: unknown } } }).providerOptions
+          ?.anthropic?.cacheControl,
+    );
+    expect(tagged).toHaveLength(1);
+    expect(tagged[0][0]).toBe(toolEntries[toolEntries.length - 1][0]);
   });
 });
 
