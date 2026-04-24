@@ -175,6 +175,9 @@ export default defineSchema({
     isAlternating: v.boolean(),
     descriptionHow: v.string(),
     descriptionWhy: v.string(),
+    nameSearchText: v.optional(v.string()),
+    muscleGroupsSearchText: v.optional(v.string()),
+    trainingTypesSearchText: v.optional(v.string()),
     thumbnailMediaUrl: v.optional(v.string()),
     accessory: v.optional(v.string()),
     onMachineInfo: v.optional(v.any()),
@@ -203,7 +206,10 @@ export default defineSchema({
     thumbnailStorageId: v.optional(v.id("_storage")),
   })
     .index("by_tonalId", ["tonalId"])
-    .index("by_accessory", ["accessory"]),
+    .index("by_accessory", ["accessory"])
+    .searchIndex("search_name", { searchField: "nameSearchText" })
+    .searchIndex("search_muscle_groups", { searchField: "muscleGroupsSearchText" })
+    .searchIndex("search_training_types", { searchField: "trainingTypesSearchText" }),
 
   /** Tonal training type taxonomy (synced with movement catalog). */
   trainingTypes: defineTable({
@@ -212,6 +218,26 @@ export default defineSchema({
     description: v.string(),
     lastSyncedAt: v.number(),
   }).index("by_tonalId", ["tonalId"]),
+
+  /** Tracks whether movement denormalized search fields are safe to query. */
+  movementSearchState: defineTable({
+    key: v.string(),
+    version: v.number(),
+    completedAt: v.number(),
+  }).index("by_key", ["key"]),
+
+  /** Materialized training snapshot used by the coach hot path. */
+  coachState: defineTable({
+    userId: v.id("users"),
+    snapshot: v.string(),
+    snapshotVersion: v.number(),
+    userTimezone: v.optional(v.union(v.string(), v.null())),
+    refreshedAt: v.number(),
+    refreshRequestedAt: v.optional(v.number()),
+    refreshRequestedTimezone: v.optional(v.union(v.string(), v.null())),
+    failedAt: v.optional(v.number()),
+    lastError: v.optional(v.string()),
+  }).index("by_userId", ["userId"]),
 
   /** AI-generated workout plans. Lifecycle: draft -> pushing -> pushed -> completed. */
   workoutPlans: defineTable({
@@ -400,6 +426,14 @@ export default defineSchema({
     .index("by_createdAt", ["createdAt"])
     .index("by_userId_createdAt", ["userId", "createdAt"]),
 
+  aiBudgetWarnings: defineTable({
+    userId: v.id("users"),
+    date: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_userId_date", ["userId", "date"])
+    .index("by_userId", ["userId"]),
+
   /** AI agent tool execution log (latency, success/error tracking). */
   aiToolCalls: defineTable({
     userId: v.optional(v.string()),
@@ -468,9 +502,30 @@ export default defineSchema({
     cacheWriteTokens: v.number(),
     totalCostUsd: v.optional(v.number()),
 
+    scheduledAt: v.optional(v.number()),
+    processingStartedAt: v.optional(v.number()),
+    streamStartedAt: v.optional(v.number()),
+    queueDelayMs: v.optional(v.number()),
+    preStreamSetupMs: v.optional(v.number()),
+
     timeToFirstTokenMs: v.optional(v.number()),
     timeToLastTokenMs: v.optional(v.number()),
+    totalTimeToFirstTokenMs: v.optional(v.number()),
+    totalTimeToLastTokenMs: v.optional(v.number()),
     outputTokensPerSec: v.optional(v.number()),
+
+    contextBuildMs: v.optional(v.number()),
+    snapshotBuildMs: v.optional(v.number()),
+    contextBuildCount: v.optional(v.number()),
+    contextMessageCount: v.optional(v.number()),
+    snapshotSource: v.optional(
+      v.union(
+        v.literal("coach_state_fresh"),
+        v.literal("coach_state_stale"),
+        v.literal("live_rebuild"),
+      ),
+    ),
+    retrievalEnabled: v.optional(v.boolean()),
 
     approvalPauses: v.number(),
     workoutPlanCreatedId: v.optional(v.id("workoutPlans")),
