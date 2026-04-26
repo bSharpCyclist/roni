@@ -19,7 +19,7 @@ import { isRateLimitError } from "@convex-dev/rate-limiter";
 import { v } from "convex/values";
 import { action } from "../_generated/server";
 import { internal } from "../_generated/api";
-import { decryptGarminSecret, getGarminAppConfig } from "./credentials";
+import { decryptGarminSecret, getGarminAppConfig, isGarminConfigured } from "./credentials";
 import { signOAuth1Request } from "./oauth1";
 
 const BACKFILL_BASE = "https://apis.garmin.com/wellness-api/rest/backfill";
@@ -178,6 +178,9 @@ export const requestGarminBackfill = action({
     days: v.number(),
   },
   handler: async (ctx, { days }): Promise<RequestGarminBackfillResult> => {
+    if (!isGarminConfigured()) {
+      return { success: false, error: "Garmin integration is not available on this deployment." };
+    }
     if (!Number.isFinite(days) || days < MIN_DAYS || days > MAX_DAYS) {
       return { success: false, error: `days must be between ${MIN_DAYS} and ${MAX_DAYS}` };
     }

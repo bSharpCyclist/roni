@@ -55,6 +55,7 @@ function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const me = useQuery(api.users.getMe, {});
+  const garminFeature = useQuery(api.garmin.connections.getGarminFeatureStatus, {});
   const [signOutOpen, setSignOutOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -158,11 +159,13 @@ function SettingsPageInner() {
         <TonalConnectionCard connection={tonalConnection} />
       </section>
 
-      {/* Garmin Connection */}
-      <section className="mb-10">
-        <h2 className={SECTION_HEADING}>Garmin Connection</h2>
-        <GarminConnectionCard callbackNotice={garminNotice} />
-      </section>
+      {/* Garmin Connection — hidden when the deployment isn't configured. */}
+      {garminFeature?.enabled ? (
+        <section className="mb-10">
+          <h2 className={SECTION_HEADING}>Garmin Connection</h2>
+          <GarminConnectionCard callbackNotice={garminNotice} />
+        </section>
+      ) : null}
 
       {/* Equipment */}
       <section className="mb-10">

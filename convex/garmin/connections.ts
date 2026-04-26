@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { internalMutation, internalQuery, query } from "../_generated/server";
 import { getEffectiveUserId } from "../lib/auth";
 import { rateLimiter } from "../rateLimits";
+import { isGarminConfigured } from "./credentials";
 
 const disconnectReasonValidator = v.union(
   v.literal("user_disconnected"),
@@ -29,6 +30,19 @@ export type GarminConnectionStatus =
       disconnectedAt: number;
       reason?: "user_disconnected" | "permission_revoked" | "token_invalid";
     };
+
+/**
+ * Whether this Convex deployment has the Garmin OAuth env vars
+ * configured. The UI hides the connect surface on `false` so prod
+ * deployments without Garmin app credentials don't show a button
+ * that immediately errors.
+ */
+export const getGarminFeatureStatus = query({
+  args: {},
+  handler: async (): Promise<{ enabled: boolean }> => {
+    return { enabled: isGarminConfigured() };
+  },
+});
 
 export const getMyGarminStatus = query({
   args: {},

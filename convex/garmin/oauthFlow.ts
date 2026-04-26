@@ -26,7 +26,14 @@ import { isRateLimitError } from "@convex-dev/rate-limiter";
 import { z } from "zod";
 import { action } from "../_generated/server";
 import { internal } from "../_generated/api";
-import { decryptGarminSecret, encryptGarminSecret, getGarminAppConfig } from "./credentials";
+import {
+  decryptGarminSecret,
+  encryptGarminSecret,
+  getGarminAppConfig,
+  isGarminConfigured,
+} from "./credentials";
+
+const GARMIN_DISABLED_ERROR = "Garmin integration is not available on this deployment.";
 import { signOAuth1Request } from "./oauth1";
 
 const userIdResponseSchema = z.object({ userId: z.string().min(1) });
@@ -86,6 +93,10 @@ export type StartGarminOAuthResult =
 export const startGarminOAuth = action({
   args: {},
   handler: async (ctx): Promise<StartGarminOAuthResult> => {
+    if (!isGarminConfigured()) {
+      return { success: false, error: GARMIN_DISABLED_ERROR };
+    }
+
     const userId = await ctx.runQuery(internal.lib.auth.resolveEffectiveUserId, {});
     if (!userId) return { success: false, error: "Not authenticated" };
 
@@ -159,6 +170,10 @@ export const completeGarminOAuth = action({
     oauthVerifier: v.string(),
   },
   handler: async (ctx, args): Promise<CompleteGarminOAuthResult> => {
+    if (!isGarminConfigured()) {
+      return { success: false, error: GARMIN_DISABLED_ERROR };
+    }
+
     // Identify the user completing the flow from their authenticated
     // session. This runs from the Next.js `/garmin/callback` page, so
     // the Convex client carries the session cookie/token.

@@ -16,6 +16,19 @@ export interface GarminAppConfig {
 }
 
 /**
+ * Cheap feature-flag check: are the three required Garmin env vars set
+ * on this deployment? The UI calls this to hide the connect surface,
+ * and actions short-circuit on `false` with a user-friendly error.
+ */
+export function isGarminConfigured(): boolean {
+  return Boolean(
+    process.env.GARMIN_CONSUMER_KEY &&
+    process.env.GARMIN_CONSUMER_SECRET &&
+    process.env.GARMIN_OAUTH_CALLBACK_URL,
+  );
+}
+
+/**
  * Read Garmin app credentials from env. Throws at call time (not module
  * load) so workspaces without Garmin configured can still import Garmin
  * code paths that are never exercised.
