@@ -76,12 +76,21 @@ describe("capitalizeWorkoutType", () => {
     );
   });
 
+  it("preserves acronym boundaries in camelCase labels", () => {
+    expect(capitalizeWorkoutType("HIITWorkout")).toBe("HIIT Workout");
+  });
+
   it("handles single-word input", () => {
     expect(capitalizeWorkoutType("yoga")).toBe("Yoga");
   });
 
   it("handles already capitalized input", () => {
     expect(capitalizeWorkoutType("Running")).toBe("Running");
+  });
+
+  it("normalizes Garmin-style uppercase enum labels", () => {
+    expect(capitalizeWorkoutType("STRENGTH_TRAINING")).toBe("Strength Training");
+    expect(capitalizeWorkoutType("INDOOR_CARDIO")).toBe("Indoor Cardio");
   });
 
   it("handles empty string", () => {
@@ -127,6 +136,28 @@ describe("formatExternalActivityLine", () => {
 
   it("omits heart rate when HR is zero", () => {
     const line = formatExternalActivityLine(makeExternalActivity({ averageHeartRate: 0 }));
+    expect(line).not.toContain("HR");
+  });
+
+  it("omits calories when calories are zero", () => {
+    const line = formatExternalActivityLine(makeExternalActivity({ totalCalories: 0 }));
+    // Match a numeric calorie token specifically so unrelated substrings
+    // (e.g. "Calorie Tracker" workout names) don't false-positive.
+    expect(line).not.toMatch(/\d+\s*cal\b/i);
+  });
+
+  it("omits optional metrics when the source does not provide them", () => {
+    const line = formatExternalActivityLine(
+      makeExternalActivity({
+        totalCalories: undefined,
+        distance: undefined,
+        averageHeartRate: undefined,
+      }),
+    );
+
+    expect(line).toContain("30min");
+    expect(line).not.toContain("cal");
+    expect(line).not.toMatch(/\d+\.\d+ mi/);
     expect(line).not.toContain("HR");
   });
 });

@@ -127,4 +127,31 @@ export const rateLimiter = new RateLimiter(components.rateLimiter, {
     period: HOUR,
     capacity: 5,
   },
+  // Caps how often one user can start the Garmin OAuth handshake. Each
+  // start consumes a Garmin request_token call against a partner quota
+  // shared across all users (eval: 100/partner/min), so aggressive clicks
+  // or bots shouldn't burn through it.
+  startGarminOAuth: {
+    kind: "token bucket",
+    rate: 5,
+    period: MINUTE,
+    capacity: 3,
+  },
+  // Token bucket that refills a few times per hour. Prevents accidental
+  // DoS against Garmin while still letting a dev iterate locally
+  // without waiting until the next calendar day. Garmin's own
+  // per-user-per-summary backfill cap is ~5/day, so their limit is the
+  // tighter one and the ultimate guardrail on abuse.
+  backfillGarminData: {
+    kind: "token bucket",
+    rate: 6,
+    period: HOUR,
+    capacity: 3,
+  },
+  disconnectMyGarmin: {
+    kind: "token bucket",
+    rate: 5,
+    period: MINUTE,
+    capacity: 3,
+  },
 });

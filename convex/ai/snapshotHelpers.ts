@@ -11,6 +11,7 @@ export interface SnapshotSection {
 }
 
 const SNAPSHOT_MAX_CHARS = 9000;
+const WORKOUT_TYPE_ACRONYMS = new Set(["GPS", "HIIT", "HRV"]);
 export { SNAPSHOT_MAX_CHARS };
 
 export function trimSnapshot(sections: SnapshotSection[], maxChars: number): string {
@@ -50,27 +51,35 @@ export function getHrIntensityLabel(hr: number): string | null {
 
 export function capitalizeWorkoutType(workoutType: string): string {
   return workoutType
-    .replace(/([A-Z])/g, " $1")
+    .replace(/[_-]+/g, " ")
+    .replace(/([a-z0-9])([A-Z])|([A-Z])([A-Z])(?=[a-z])/g, "$1$3 $2$4")
     .trim()
-    .split(" ")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) =>
+      WORKOUT_TYPE_ACRONYMS.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
+    )
     .join(" ");
 }
 
 export function formatExternalActivityLine(a: ExternalActivity): string {
   const type = capitalizeWorkoutType(a.workoutType);
   const mins = Math.round(a.totalDuration / 60);
-  const cal = Math.round(a.totalCalories);
   const date = a.beginTime.split("T")[0];
 
-  let line = `  ${date} — ${type} (${a.source}) | ${mins}min | ${cal} cal`;
-  if (a.distance > 0) {
+  let line = `  ${date} — ${type} (${a.source}) | ${mins}min`;
+  if (a.totalCalories !== undefined && a.totalCalories > 0) {
+    line += ` | ${Math.round(a.totalCalories)} cal`;
+  }
+  if (a.distance !== undefined && a.distance > 0) {
     const miles = (a.distance / 1609.34).toFixed(1);
     line += ` | ${miles} mi`;
   }
-  const hrLabel = getHrIntensityLabel(a.averageHeartRate);
-  if (hrLabel) {
-    line += ` | Avg HR ${Math.round(a.averageHeartRate)} (${hrLabel})`;
+  if (a.averageHeartRate !== undefined && a.averageHeartRate > 0) {
+    const hrLabel = getHrIntensityLabel(a.averageHeartRate);
+    if (hrLabel) {
+      line += ` | Avg HR ${Math.round(a.averageHeartRate)} (${hrLabel})`;
+    }
   }
   return line;
 }

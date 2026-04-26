@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  type ExternalActivitySource,
+  normalizeExternalActivitySource,
+} from "./externalActivitySources";
 import type { ExternalActivity } from "./types";
 
 const externalActivitySchema = z.object({
@@ -9,7 +13,7 @@ const externalActivitySchema = z.object({
   activeCalories: z.number(),
   totalCalories: z.number(),
   averageHeartRate: z.number(),
-  source: z.string(),
+  source: z.string().transform(normalizeExternalActivitySource),
   externalId: z.string(),
 });
 
@@ -30,9 +34,10 @@ export type ProjectedExternalActivity = Pick<
   | "activeCalories"
   | "totalCalories"
   | "averageHeartRate"
-  | "source"
   | "externalId"
->;
+> & {
+  source: ExternalActivitySource;
+};
 
 /**
  * Project a raw /v6/users/{id}/external-activities response down to the fields

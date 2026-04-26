@@ -12,6 +12,10 @@ import type { Doc } from "../_generated/dataModel";
 import { isDeletionInProgress } from "../lib/auth";
 import { afterInsert as afterPerformanceInsert } from "../personalRecords";
 import { requestCoachStateRefresh } from "../coachState";
+import {
+  EXTERNAL_ACTIVITY_SOURCES,
+  normalizeExternalActivitySource,
+} from "./externalActivitySources";
 import { DEFAULT_TARGET_AREA, DEFAULT_WORKOUT_TITLE } from "./workoutMeta";
 
 // ---------------------------------------------------------------------------
@@ -225,11 +229,18 @@ export const externalActivityValidator = v.object({
   workoutType: v.string(),
   beginTime: v.string(),
   totalDuration: v.number(),
-  activeCalories: v.number(),
-  totalCalories: v.number(),
-  averageHeartRate: v.number(),
-  source: v.string(),
-  distance: v.number(),
+  activeCalories: v.optional(v.number()),
+  totalCalories: v.optional(v.number()),
+  averageHeartRate: v.optional(v.number()),
+  maxHeartRate: v.optional(v.number()),
+  source: v.union(
+    v.literal(EXTERNAL_ACTIVITY_SOURCES.APPLE_HEALTH),
+    v.literal(EXTERNAL_ACTIVITY_SOURCES.GARMIN),
+    v.literal(EXTERNAL_ACTIVITY_SOURCES.OTHER),
+  ),
+  distance: v.optional(v.number()),
+  elevationGainMeters: v.optional(v.number()),
+  avgPaceSecondsPerKm: v.optional(v.number()),
 });
 
 type ExternalActivityPayload = typeof externalActivityValidator.type;
@@ -281,8 +292,11 @@ function externalActivityMatches(
     existing.activeCalories === activity.activeCalories &&
     existing.totalCalories === activity.totalCalories &&
     existing.averageHeartRate === activity.averageHeartRate &&
+    existing.maxHeartRate === activity.maxHeartRate &&
     existing.source === activity.source &&
-    existing.distance === activity.distance
+    existing.distance === activity.distance &&
+    existing.elevationGainMeters === activity.elevationGainMeters &&
+    existing.avgPaceSecondsPerKm === activity.avgPaceSecondsPerKm
   );
 }
 
@@ -351,12 +365,22 @@ export const persistExternalActivities = internalMutation({
     const now = Date.now();
     let changed = false;
     for (const a of activities) {
-      const existing = await ctx.db
+      const existingByCanonicalSource = await ctx.db
         .query("externalActivities")
-        .withIndex("by_userId_externalId", (q) =>
-          q.eq("userId", userId).eq("externalId", a.externalId),
+        .withIndex("by_userId_source_externalId", (q) =>
+          q.eq("userId", userId).eq("source", a.source).eq("externalId", a.externalId),
         )
         .first();
+      const existing =
+        existingByCanonicalSource ??
+        (
+          await ctx.db
+            .query("externalActivities")
+            .withIndex("by_userId_externalId", (q) =>
+              q.eq("userId", userId).eq("externalId", a.externalId),
+            )
+            .take(10)
+        ).find((row) => normalizeExternalActivitySource(row.source) === a.source);
       if (existing) {
         if (externalActivityMatches(existing, a)) continue;
         await ctx.db.replace(existing._id, { userId, ...a, syncedAt: now });
