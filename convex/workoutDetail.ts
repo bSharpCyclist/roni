@@ -59,7 +59,7 @@ export interface EnrichedWorkoutDetail extends Omit<WorkoutActivityDetail, "work
   targetArea?: string;
 }
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Return the movementIds that got a new all-time PR in the given activity.
@@ -101,7 +101,8 @@ export const getWorkoutDetail = action({
   args: { activityId: v.string() },
   handler: async (ctx, args): Promise<EnrichedWorkoutDetail | null> => {
     if (!UUID_RE.test(args.activityId)) {
-      throw new Error(`Invalid activityId: expected UUID, got "${args.activityId}"`);
+      console.warn(`getWorkoutDetail: invalid activityId format "${args.activityId}"`);
+      return null;
     }
     const userId = await ctx.runQuery(internal.lib.auth.resolveEffectiveUserId, {});
     // Session expired or user not signed in — AppShell will redirect to /login.
