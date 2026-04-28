@@ -47,6 +47,9 @@ if (cronsEnabled()) {
 
   crons.cron("data-retention", "0 2 * * *", internal.dataRetention.runDataRetention, {});
 
+  // Sunday 06:00 UTC keeps clear of the 03:00 / 04:00 catalog syncs.
+  crons.cron("data-retention-cache", "0 6 * * 0", internal.dataRetention.runCacheRetention, {});
+
   crons.interval(
     "sweep-garmin-oauth-states",
     { hours: 1 },
