@@ -2,6 +2,120 @@
 
 All notable changes to this project are documented here. This file is maintained automatically by [release-please](https://github.com/googleapis/release-please) from Conventional Commits on `main`. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.8.0](https://github.com/bSharpCyclist/roni/compare/v0.7.0...v0.8.0) (2026-04-29)
+
+
+### Features
+
+* add hidden dev tools page for Tonal API inspection ([#175](https://github.com/bSharpCyclist/roni/issues/175)) ([5d8dc72](https://github.com/bSharpCyclist/roni/commit/5d8dc7276891cf55f2c8c4a7221d08a453b78f2f))
+* add npm run setup interactive contributor bootstrap ([#177](https://github.com/bSharpCyclist/roni/issues/177)) ([8bf7d30](https://github.com/bSharpCyclist/roni/commit/8bf7d30e2389f2a0cd27e6640ca1c986431f5603))
+* added check in step to onboarding ([#168](https://github.com/bSharpCyclist/roni/issues/168)) ([3044532](https://github.com/bSharpCyclist/roni/commit/30445329c1a7d91189209b639ce9fd9a99964c53))
+* **ai:** add aiRun telemetry table for per-turn observability ([#249](https://github.com/bSharpCyclist/roni/issues/249)) ([f61df11](https://github.com/bSharpCyclist/roni/commit/f61df11e238dec0d5e7cbd57e0eefec3566b699f))
+* **ai:** attribute transient provider outages to the upstream, not Roni ([#254](https://github.com/bSharpCyclist/roni/issues/254)) ([fde6ec9](https://github.com/bSharpCyclist/roni/commit/fde6ec966bf80051f6f450c4af0cec77b65fbc09))
+* **ai:** internalQuery to measure cache hit rate by provider ([#262](https://github.com/bSharpCyclist/roni/issues/262)) ([5ad9d14](https://github.com/bSharpCyclist/roni/commit/5ad9d14d0004d93800d661664fe5e95c481df18f))
+* **ai:** migrate AI observability from PostHog to Phoenix Cloud ([#251](https://github.com/bSharpCyclist/roni/issues/251)) ([946053c](https://github.com/bSharpCyclist/roni/commit/946053c5193639bfa8d5d84f8f2df1d8acae892b))
+* **ai:** wire PostHog LLM Analytics via Vercel AI SDK telemetry ([#246](https://github.com/bSharpCyclist/roni/issues/246)) ([749930d](https://github.com/bSharpCyclist/roni/commit/749930d39712898cfbd3dc481f3c00a2546e6458))
+* background data sync + bug fixes ([#118](https://github.com/bSharpCyclist/roni/issues/118), [#119](https://github.com/bSharpCyclist/roni/issues/119), [#120](https://github.com/bSharpCyclist/roni/issues/120)) ([#121](https://github.com/bSharpCyclist/roni/issues/121)) ([9e18ea3](https://github.com/bSharpCyclist/roni/commit/9e18ea3a6a7f79a61305a1879ca820bd323c6a57))
+* background data sync for initial Tonal history import ([#114](https://github.com/bSharpCyclist/roni/issues/114)) ([21e3170](https://github.com/bSharpCyclist/roni/commit/21e31702eac85cd987ce2fd63b3b6b6b0db10e3e))
+* **evals:** gate nightly experiment on evaluator scores ([#266](https://github.com/bSharpCyclist/roni/issues/266)) ([5863b65](https://github.com/bSharpCyclist/roni/commit/5863b657f8b10c0bc9e571334bf8e45a1395b660))
+* full workout history data export (CSV + JSON) ([#116](https://github.com/bSharpCyclist/roni/issues/116)) ([8ec5a91](https://github.com/bSharpCyclist/roni/commit/8ec5a91cbc692f998f27a2d923b0e6d25d36cfc9))
+* **garmin:** harden integration and dashboard UX ([#273](https://github.com/bSharpCyclist/roni/issues/273)) ([8ec425d](https://github.com/bSharpCyclist/roni/commit/8ec425de386e1206f876063f42226dac84e3887c))
+* gracefully disable Garmin when deployment is not configured ([7cd202d](https://github.com/bSharpCyclist/roni/commit/7cd202de23e5d567ff96061b379c77dea2ae4612))
+* initial public release ([2e1890f](https://github.com/bSharpCyclist/roni/commit/2e1890f8030057bef0fa929ae9f7f8ab029f8c76))
+* multi-provider support (Gemini, Claude, OpenAI, OpenRouter) ([#106](https://github.com/bSharpCyclist/roni/issues/106)) ([939fc22](https://github.com/bSharpCyclist/roni/commit/939fc22eac276131607b6c1d83df62887ef4e151))
+* **nav:** drop /prs from nav, elevate Dashboard PR tile as the destination ([#247](https://github.com/bSharpCyclist/roni/issues/247)) ([2b7f1a0](https://github.com/bSharpCyclist/roni/commit/2b7f1a0b554c81de79054f5c21b5a06171b64267))
+* PR tracking with materialized personal records (aggregate) ([#226](https://github.com/bSharpCyclist/roni/issues/226)) ([4c4919a](https://github.com/bSharpCyclist/roni/commit/4c4919aa8abfb5d5b22586392f3cffddc8aace20))
+* use quality-first provider defaults ([#110](https://github.com/bSharpCyclist/roni/issues/110)) ([cfb7991](https://github.com/bSharpCyclist/roni/commit/cfb799155a6186a378777e5b7d6a114587391ea4))
+* visual confirmation banners for coach actions ([#113](https://github.com/bSharpCyclist/roni/issues/113)) ([4f78094](https://github.com/bSharpCyclist/roni/commit/4f78094fdc23a35d297939f8439835fc0cda58c1))
+
+
+### Bug Fixes
+
+* address 5 Sentry issues across AI, cache, and proxy layers ([#112](https://github.com/bSharpCyclist/roni/issues/112)) ([1e0bb71](https://github.com/bSharpCyclist/roni/commit/1e0bb71ee33a6765afcf7a6f8a8c9585550dc346))
+* **ai:** place training snapshot in system prefix (Gemini rejects mid-conversation system messages) ([#259](https://github.com/bSharpCyclist/roni/issues/259)) ([f052d0d](https://github.com/bSharpCyclist/roni/commit/f052d0db5dad8c1d409b3f6fbbdd3c885851c621))
+* **auth:** return existingUserId on update path ([#228](https://github.com/bSharpCyclist/roni/issues/228)) ([7ed9b41](https://github.com/bSharpCyclist/roni/commit/7ed9b41619e475a2d69b5004b48335641b4c5190))
+* batch account deletion to stay under 4096 read limit ([#154](https://github.com/bSharpCyclist/roni/issues/154)) ([3b9903b](https://github.com/bSharpCyclist/roni/commit/3b9903b0363743f023dab8fddda3127ab058eed7))
+* batch resolve 2 PostHog production errors (g1 history ordering + g2 quota retry) ([#289](https://github.com/bSharpCyclist/roni/issues/289)) ([a59594e](https://github.com/bSharpCyclist/roni/commit/a59594e961cd469923bd7521af9890f7cd3cf377))
+* batch resolve top PostHog production errors ([#291](https://github.com/bSharpCyclist/roni/issues/291)) ([c84c760](https://github.com/bSharpCyclist/roni/commit/c84c76065cd27d703754e8fe9e743ac9f8b48e70))
+* cache lightweight Activity[] instead of raw WorkoutActivityDetail[] ([86bf09e](https://github.com/bSharpCyclist/roni/commit/86bf09e675a027eaac986a5af6ffa253f85df6c0))
+* classify depleted Gemini credits as BYOK quota error ([#125](https://github.com/bSharpCyclist/roni/issues/125)) ([9ecd59a](https://github.com/bSharpCyclist/roni/commit/9ecd59aee3cd03c7b29a442e3c4ba68265aefeea))
+* close retry-push race that could revert a successful push ([#184](https://github.com/bSharpCyclist/roni/issues/184)) ([d256a89](https://github.com/bSharpCyclist/roni/commit/d256a8949ef376fcf45c7023c6812c4c72092cbc))
+* complete backfill after enrichment failures ([#160](https://github.com/bSharpCyclist/roni/issues/160)) ([747e298](https://github.com/bSharpCyclist/roni/commit/747e2988915cc85198b2dcc2c5ff1e0634242f52))
+* compute avgWeightLbs from per-set avgWeight, not totalVolume ([#171](https://github.com/bSharpCyclist/roni/issues/171)) ([c670d6c](https://github.com/bSharpCyclist/roni/commit/c670d6c6ea6641dd3da53d3b0569a66a4c3c09ca))
+* dashboard reads from sync tables instead of Tonal API proxy ([#123](https://github.com/bSharpCyclist/roni/issues/123)) ([ab568db](https://github.com/bSharpCyclist/roni/commit/ab568db1484ee32395f338380a1bd19bd0ccd54c))
+* **dashboard:** workout date shows 'yesterday' instead of 'today' for same-day workouts ([#250](https://github.com/bSharpCyclist/roni/issues/250)) ([f7c5d40](https://github.com/bSharpCyclist/roni/commit/f7c5d40e65ff3c54edfe3a93c584382b50467f44))
+* disable cron jobs in dev via DISABLE_CRONS env var ([#149](https://github.com/bSharpCyclist/roni/issues/149)) ([de37af0](https://github.com/bSharpCyclist/roni/commit/de37af06d8bf59b4b44bb6bb7aeb46549fb61474))
+* double avgWeight for StraightBar exercises ([#134](https://github.com/bSharpCyclist/roni/issues/134)) ([#161](https://github.com/bSharpCyclist/roni/issues/161)) ([054e6d9](https://github.com/bSharpCyclist/roni/commit/054e6d92401440f82627e9a2022e1e9f02b62757))
+* eliminate OCC contention on systemHealth table ([#152](https://github.com/bSharpCyclist/roni/issues/152)) ([9251bb0](https://github.com/bSharpCyclist/roni/commit/9251bb0edbf11e6fed2b7aa2bad0b280b1e55eed))
+* evict oversized cache reads and guard oversized writes in tonal proxy ([#221](https://github.com/bSharpCyclist/roni/issues/221)) ([39a2ec9](https://github.com/bSharpCyclist/roni/commit/39a2ec92b95be29ede75880efb0b493eed646350))
+* filter ghost workout entries from recent workouts list ([#150](https://github.com/bSharpCyclist/roni/issues/150)) ([2b26645](https://github.com/bSharpCyclist/roni/commit/2b266454c1baac28327bc5da0d2b758fa8553556)), closes [#148](https://github.com/bSharpCyclist/roni/issues/148)
+* improve tonalCache cleanup with index and daily cadence ([#165](https://github.com/bSharpCyclist/roni/issues/165)) ([fa2c2bf](https://github.com/bSharpCyclist/roni/commit/fa2c2bf49a2d20f3cb94d7e1a184024499b905aa)), closes [#164](https://github.com/bSharpCyclist/roni/issues/164)
+* let 401 errors propagate to withTokenRetry for token refresh ([#162](https://github.com/bSharpCyclist/roni/issues/162)) ([0de3c1a](https://github.com/bSharpCyclist/roni/commit/0de3c1ae598c616cd9bb77cf5b6e94993087ae03))
+* merge consecutive same-role messages for Gemini turn alternation ([#111](https://github.com/bSharpCyclist/roni/issues/111)) ([d19f0cf](https://github.com/bSharpCyclist/roni/commit/d19f0cf5d5937e62f3b3b322ed083023a8cf9720))
+* native-button errors ([#155](https://github.com/bSharpCyclist/roni/issues/155)) ([8ce62f2](https://github.com/bSharpCyclist/roni/commit/8ce62f2a5327a08f86206e73b3c9268e66729e32))
+* page-by-page backfill to avoid 64MB OOM ([#153](https://github.com/bSharpCyclist/roni/issues/153)) ([1989582](https://github.com/bSharpCyclist/roni/commit/1989582a2eab9fdffbc43058ebc6ae892762fee8))
+* paginate dev-tools cache and shrink tonalCache delete batch ([#178](https://github.com/bSharpCyclist/roni/issues/178)) ([3f59b7a](https://github.com/bSharpCyclist/roni/commit/3f59b7ab55fab704a36e8c3fe99da62d3a037c4c))
+* pre-save user message to prevent triple Gemini API calls on retry ([#141](https://github.com/bSharpCyclist/roni/issues/141)) ([d375d9d](https://github.com/bSharpCyclist/roni/commit/d375d9d167609ea65d7438ce74c36f898da129d6))
+* pre-warm chat cache keys during Tonal backfill ([#94](https://github.com/bSharpCyclist/roni/issues/94)) ([2395cc4](https://github.com/bSharpCyclist/roni/commit/2395cc4a17c902fddd55dbbd377e7fa379d89758))
+* prompts for AI display workout plan errors ([#166](https://github.com/bSharpCyclist/roni/issues/166)) ([d4b179e](https://github.com/bSharpCyclist/roni/commit/d4b179e7c265a80b0bfb5dd686b5a30942d16b0d))
+* recover scheduled chat failures ([#217](https://github.com/bSharpCyclist/roni/issues/217)) ([9d75ae6](https://github.com/bSharpCyclist/roni/commit/9d75ae63d984508c44f225cb68e0b4b741649608))
+* reduce cache cleanup batch size to avoid 16MB read limit ([#167](https://github.com/bSharpCyclist/roni/issues/167)) ([7fdccb8](https://github.com/bSharpCyclist/roni/commit/7fdccb8085d7a2eff76b350762680d3a72076600))
+* replace .filter() with index ranges and fix query patterns ([#174](https://github.com/bSharpCyclist/roni/issues/174)) ([1657372](https://github.com/bSharpCyclist/roni/commit/16573729ed02bf3041b2bb1393f6e27fc7849c04))
+* **reset-password:** stop form remounting on every keystroke ([#227](https://github.com/bSharpCyclist/roni/issues/227)) ([d0b2017](https://github.com/bSharpCyclist/roni/commit/d0b2017b5b10fe75d58d02cb33ded10b2b670f11))
+* resolve 5 Sentry production errors (TONALCOACH-3P/1H/3M/12/17) ([#288](https://github.com/bSharpCyclist/roni/issues/288)) ([3af0285](https://github.com/bSharpCyclist/roni/commit/3af0285bc376e43b0114750085d70a900f34f372))
+* retry on 429 rate limit and Gemini high demand errors ([#124](https://github.com/bSharpCyclist/roni/issues/124)) ([90247e9](https://github.com/bSharpCyclist/roni/commit/90247e96fd182683a3851259e69d279a0afa3fc6))
+* route workflow PostHog capture through action step ([#220](https://github.com/bSharpCyclist/roni/issues/220)) ([c8454f5](https://github.com/bSharpCyclist/roni/commit/c8454f5f8313c92955666a2f2dde843093d02680))
+* security hardening ([#157](https://github.com/bSharpCyclist/roni/issues/157)) ([bfff2e5](https://github.com/bSharpCyclist/roni/commit/bfff2e5f24655d23ecf62b6b50d33b6224486f7a))
+* strip orphaned tool calls from thread history ([#158](https://github.com/bSharpCyclist/roni/issues/158)) ([bba47bb](https://github.com/bSharpCyclist/roni/commit/bba47bb5667ee5dedf27efd8932e2e3045acd30b))
+* suppress Sentry noise from control-flow sentinels and Tonal credential errors ([#219](https://github.com/bSharpCyclist/roni/issues/219)) ([8213c43](https://github.com/bSharpCyclist/roni/commit/8213c433af382330750dd9040a20619743d15890))
+* surface BYOK errors and clean up orphaned pending messages ([#181](https://github.com/bSharpCyclist/roni/issues/181)) ([a2ce13f](https://github.com/bSharpCyclist/roni/commit/a2ce13f5d98687383208b3f43ef5b0cc07314182))
+* surface failed async messages in chat UI ([#139](https://github.com/bSharpCyclist/roni/issues/139)) ([a28f04b](https://github.com/bSharpCyclist/roni/commit/a28f04b8a51d24356549546ab318c6ad755e9e89))
+* switch workout history to /workout-activities endpoint ([#128](https://github.com/bSharpCyclist/roni/issues/128)) ([5c75ed3](https://github.com/bSharpCyclist/roni/commit/5c75ed356f52e313ccc908e2cdbc208b26224baf))
+* timezone and validations ([#159](https://github.com/bSharpCyclist/roni/issues/159)) ([cf01caa](https://github.com/bSharpCyclist/roni/commit/cf01caaf5058d8f5ca22f7e92c45053db0183fc7))
+* **tonal:** accept optional prescribedReps on workout set activity ([#248](https://github.com/bSharpCyclist/roni/issues/248)) ([6946df7](https://github.com/bSharpCyclist/roni/commit/6946df7b0fa7f8a4d616f32e0c6ea4bc29774b75))
+* track tonal_connected event during onboarding flow ([502d295](https://github.com/bSharpCyclist/roni/commit/502d295af228ca373dee2a68a550cf3ec84b3d73))
+* triage 7 Sentry issues (~1500 events, 30+ users) ([#244](https://github.com/bSharpCyclist/roni/issues/244)) ([3190a77](https://github.com/bSharpCyclist/roni/commit/3190a777969096631d564a0f46235da82f61e32e))
+* turn-aware context windowing for Gemini message ordering ([#169](https://github.com/bSharpCyclist/roni/issues/169)) ([06068b2](https://github.com/bSharpCyclist/roni/commit/06068b2c2cd3e705b2df43bc22d32a6d5fe9d531))
+* unblock coach freeze for users with large Tonal history ([#92](https://github.com/bSharpCyclist/roni/issues/92)) ([41b8ab6](https://github.com/bSharpCyclist/roni/commit/41b8ab6b61407ad164962f51717c3de382531739))
+* use Chat Completions API for OpenRouter (not Responses API) ([7f603d5](https://github.com/bSharpCyclist/roni/commit/7f603d5a440e73fa5e1317186f86b16b5bf19cde))
+* use hasOwnProperty.call for ES2021 compat in chatHelpers ([#218](https://github.com/bSharpCyclist/roni/issues/218)) ([b52bd66](https://github.com/bSharpCyclist/roni/commit/b52bd66dda99a8620bb3db0eeb92b14650b2272a))
+* use recent-only fetch for incremental sync ([#142](https://github.com/bSharpCyclist/roni/issues/142)) ([e6bf53c](https://github.com/bSharpCyclist/roni/commit/e6bf53cb2a8a9cf3a2f3d4c67bf28810c2844aa3))
+* workout program names in history ([#263](https://github.com/bSharpCyclist/roni/issues/263)) ([be6c55d](https://github.com/bSharpCyclist/roni/commit/be6c55df46c9713e4a294753c79136ed1edaec55))
+* workout sync for large histories + per-set weight display ([#130](https://github.com/bSharpCyclist/roni/issues/130)) ([04d4de9](https://github.com/bSharpCyclist/roni/commit/04d4de90b5441b6264dfe157f329d30c40498863))
+
+
+### Performance Improvements
+
+* **ai:** enable Anthropic prompt caching for static instructions + tools ([#186](https://github.com/bSharpCyclist/roni/issues/186)) ([9da3862](https://github.com/bSharpCyclist/roni/commit/9da3862eba0c205ab5c6f562e03f435a10d96cb5))
+* **ai:** move training snapshot out of the cached system prefix ([#256](https://github.com/bSharpCyclist/roni/issues/256)) ([f235549](https://github.com/bSharpCyclist/roni/commit/f2355499339aeb76d70eb9e06e500de52761607b))
+* **ai:** provider-aware snapshot placement + last-assistant cache marker for claude ([#261](https://github.com/bSharpCyclist/roni/issues/261)) ([a39d051](https://github.com/bSharpCyclist/roni/commit/a39d051e74382cc2aea540ce7624f5ca929701bc))
+* **ai:** remove exercise catalog from snapshot ([#264](https://github.com/bSharpCyclist/roni/issues/264)) ([f3448b6](https://github.com/bSharpCyclist/roni/commit/f3448b68a40f229a4e5742110840c139dda98ed3))
+* **ai:** stack 3 anthropic cache breakpoints across tools, system, history ([#260](https://github.com/bSharpCyclist/roni/issues/260)) ([82ffe31](https://github.com/bSharpCyclist/roni/commit/82ffe31269563c067fb2c6c69961ea0febfdc64a))
+* batch sync RPCs, index workoutPlans queries, guard backfill loop ([#185](https://github.com/bSharpCyclist/roni/issues/185)) ([9ab234e](https://github.com/bSharpCyclist/roni/commit/9ab234e799ecd476a8d2ae5e7bf9caf0989aa3ba))
+* bound telemetry table growth and shrink tool previews ([#271](https://github.com/bSharpCyclist/roni/issues/271)) ([1505644](https://github.com/bSharpCyclist/roni/commit/1505644cf76f4b9e19c7ae1bf4c79b11cd2f1e62))
+* cut Convex bill via memoization, longer TTLs, circuit breaker removal ([#294](https://github.com/bSharpCyclist/roni/issues/294)) ([9bed92b](https://github.com/bSharpCyclist/roni/commit/9bed92b2f6bbc4f821b8046c2858df06f2791f8d))
+* drop redundant by_userId indexes covered by compounds ([#270](https://github.com/bSharpCyclist/roni/issues/270)) ([84de302](https://github.com/bSharpCyclist/roni/commit/84de302ab3a54178aedcf7eff26c3bf62469289f))
+* halve refresh-tonal-cache cadence to cut Convex billing ([#293](https://github.com/bSharpCyclist/roni/issues/293)) ([2fb2271](https://github.com/bSharpCyclist/roni/commit/2fb227110780aa88873496abb499ab408c860bb7))
+* project Tonal proxy cache payloads to fields readers use ([#269](https://github.com/bSharpCyclist/roni/issues/269)) ([237bf5d](https://github.com/bSharpCyclist/roni/commit/237bf5d0aa9e9d832fcf0edf125ad992d47f9fd6))
+* reduce Convex background sync churn ([#267](https://github.com/bSharpCyclist/roni/issues/267)) ([6975b93](https://github.com/bSharpCyclist/roni/commit/6975b933d52c8297f2d8c7c2b8dbb0c349c7c303))
+* split high-churn user activity state out of userProfiles ([#272](https://github.com/bSharpCyclist/roni/issues/272)) ([e2ccb73](https://github.com/bSharpCyclist/roni/commit/e2ccb738ad7c8fdd139c9da694007ef1412c4636))
+* tier background sync cadence by recent app activity ([#268](https://github.com/bSharpCyclist/roni/issues/268)) ([81fd9fa](https://github.com/bSharpCyclist/roni/commit/81fd9fa3933572f6088ef99671f0c3839e645baf))
+
+
+### Refactoring
+
+* harden cron and admin reads against the 16 MiB limit ([#179](https://github.com/bSharpCyclist/roni/issues/179)) ([523bd5d](https://github.com/bSharpCyclist/roni/commit/523bd5d3b34e8484a375920ed48365f074b1dfec))
+* rebrand from Tonal Coach / tonal.coach to Roni / roni.coach ([#156](https://github.com/bSharpCyclist/roni/issues/156)) ([55cb87a](https://github.com/bSharpCyclist/roni/commit/55cb87af83769823c07b135d374ecb327284e20f))
+* simplify Tonal push + rename doTonalCreateWorkout ([#183](https://github.com/bSharpCyclist/roni/issues/183)) ([b38710e](https://github.com/bSharpCyclist/roni/commit/b38710e7f85412301c36a6957b6d3d36c977e173))
+* **tonal:** tighten cache size budget and project workout meta payloads ([#224](https://github.com/bSharpCyclist/roni/issues/224)) ([0f19349](https://github.com/bSharpCyclist/roni/commit/0f19349f56baaee172801281c4b58f92724edd22))
+
+
+### Documentation
+
+* add release version badge to README ([e341eb0](https://github.com/bSharpCyclist/roni/commit/e341eb01fe3c7bc01ac10093ff4ade0ec4c76da5))
+* align PR template with CONTRIBUTING enforcement reality ([4c76cea](https://github.com/bSharpCyclist/roni/commit/4c76ceab36a30d819162d1b05b2410bd411f8649))
+* **privacy:** disclose garmin integration for partner review ([#257](https://github.com/bSharpCyclist/roni/issues/257)) ([8db8e35](https://github.com/bSharpCyclist/roni/commit/8db8e357ae2341c13df15d8eb09c9063899e218c))
+
 ## [0.7.0](https://github.com/JeffOtano/roni/compare/v0.6.0...v0.7.0) (2026-04-28)
 
 
